@@ -3,7 +3,7 @@ import xbmcgui
 from resources.lib.addon.constants import ACCEPTED_MEDIATYPES
 from resources.lib.addon.plugin import ADDON, ADDONPATH, PLUGINPATH, kodi_log, viewitems, convert_media_type
 from resources.lib.addon.parser import try_int, encode_url
-from resources.lib.addon.timedate import is_unaired_timestamp
+from resources.lib.addon.timedate import is_future_timestamp
 from resources.lib.addon.setutils import merge_two_dicts
 from resources.lib.container.context import ContextMenu
 # from resources.lib.addon.decorators import timer_report
@@ -72,21 +72,6 @@ class _ListItem(object):
             self.art['fanart'] = u'{}/fanart.jpg'.format(ADDONPATH)
         return self.art
 
-    def set_thumb_to_art(self, prefer_landscape=False):
-        if prefer_landscape:
-            if self.art.get('landscape'):
-                self.art['thumb'] = self.art['landscape']
-                return self.art['landscape']
-            if self.art.get('tvshow.landscape'):
-                self.art['thumb'] = self.art['tvshow.landscape']
-                return self.art['tvshow.landscape']
-        if self.art.get('fanart'):
-            self.art['thumb'] = self.art['fanart']
-            return self.art['fanart']
-        if self.art.get('tvshow.fanart'):
-            self.art['thumb'] = self.art['tvshow.fanart']
-            return self.art['tvshow.fanart']
-
     def get_trakt_type(self):
         return convert_media_type(self.infolabels.get('mediatype'), 'trakt')
 
@@ -102,7 +87,7 @@ class _ListItem(object):
     def get_tmdb_id(self):
         return self.unique_ids.get('tmdb')
 
-    def is_unaired(self, format_label=None, check_hide_settings=True, no_date=True):
+    def is_unaired(self, format_label=None, check_hide_settings=True):
         return
 
     def set_context_menu(self):
@@ -226,9 +211,9 @@ class _Collection(_ListItem):
 
 
 class _Video(_ListItem):
-    def is_unaired(self, format_label=u'[COLOR=ffcc0000][I]{}[/I][/COLOR]', check_hide_settings=True, no_date=True):
+    def is_unaired(self, format_label=u'[COLOR=ffcc0000][I]{}[/I][/COLOR]', check_hide_settings=True):
         try:
-            if not is_unaired_timestamp(self.infolabels.get('premiered'), no_date):
+            if not is_future_timestamp(self.infolabels.get('premiered'), "%Y-%m-%d", 10):
                 return
             if format_label:
                 self.label = format_label.format(self.label)

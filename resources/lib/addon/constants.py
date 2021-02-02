@@ -51,22 +51,22 @@ TMDB_ALL_ITEMS_LISTS = {
     'movie': {
         'type': 'movie',
         'sort': False,
-        'limit': 20
+        'limit': 40
     },
     'tv': {
         'type': 'tv_series',
         'sort': False,
-        'limit': 20
+        'limit': 40
     },
     'person': {
         'type': 'person',
         'sort': False,
-        'limit': 20
+        'limit': 40
     },
     'collection': {
         'type': 'collection',
         'sort': False,
-        'limit': 20
+        'limit': 40
     },
     'network': {
         'type': 'tv_network',
@@ -340,7 +340,8 @@ TRAKT_SYNC_LISTS = {
     'trakt_watchlist': {
         'sync_type': 'watchlist',
         'use_show_activity': True,
-        'sort_by': 'unsorted',
+        'sort_by': 'title',
+        'sort_how': 'asc',
         'route': TRAKT_SYNC_LISTS_ROUTE
     },
     'trakt_history': {

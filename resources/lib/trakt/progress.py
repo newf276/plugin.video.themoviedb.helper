@@ -10,7 +10,7 @@ from resources.lib.addon.cache import CACHE_SHORT, CACHE_LONG, use_simple_cache
 
 class _TraktProgress():
     @is_authorized
-    def get_inprogress_shows_list(self, page=1, limit=20, params=None, next_page=True, sort_by=None, sort_how=None):
+    def get_inprogress_shows_list(self, page=1, limit=100, params=None, next_page=True, sort_by=None, sort_how=None):
         response = self._get_upnext_episodes_list(sort_by_premiered=True) if sort_by == 'year' else self._get_inprogress_shows()
         response = TraktItems(response, trakt_type='show').build_items(
             params_def=params, sort_by=sort_by if sort_by != 'year' else 'unsorted', sort_how=sort_how)
@@ -21,7 +21,7 @@ class _TraktProgress():
 
     def _get_inprogress_shows(self):
         response = self.get_sync('watched', 'show')
-        response = TraktItems(response).sort_items('watched', 'desc')
+        response = TraktItems(response).sort_items('title', 'asc')
         hidden_shows = self.get_hiddenitems('show')
         return [i for i in response if self._is_inprogress_show(i, hidden_shows)]
 

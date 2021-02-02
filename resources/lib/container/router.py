@@ -60,7 +60,6 @@ class Container(TMDbLists, BaseDirLists, SearchLists, UserDiscoverLists, TraktLi
         self.exclude_value = split_items(self.params.pop('exclude_value', None))[0]
         self.pagination = self.pagination_is_allowed()
         self.params = reconfigure_legacy_params(**self.params)
-        self.thumb_override = 0
 
     def pagination_is_allowed(self):
         if self.params.pop('nextpage', '').lower() == 'false':
@@ -89,8 +88,7 @@ class Container(TMDbLists, BaseDirLists, SearchLists, UserDiscoverLists, TraktLi
     def add_items(self, items=None, pagination=True, parent_params=None, property_params=None, kodi_db=None, tmdb_cache_only=True):
         if not items:
             return
-        check_is_aired = parent_params.get('info') not in NO_LABEL_FORMATTING
-        hide_nodate = ADDON.getSettingBool('nodate_is_unaired')
+        self.check_is_aired = parent_params.get('info') not in NO_LABEL_FORMATTING
 
         # Build empty queue and thread pool
         self.items_queue, pool = [None] * len(items), [None] * len(items)
@@ -114,7 +112,7 @@ class Container(TMDbLists, BaseDirLists, SearchLists, UserDiscoverLists, TraktLi
             if not li:
                 continue
             li.set_episode_label()
-            if check_is_aired and li.is_unaired(no_date=hide_nodate):
+            if self.check_is_aired and li.is_unaired():
                 continue
             li.set_details(details=self.get_kodi_details(li), reverse=True)  # Quick because local db
             li.set_playcount(playcount=self.get_playcount_from_trakt(li))  # Quick because of agressive caching of Trakt object and pre-emptive dict comprehension
@@ -122,7 +120,6 @@ class Container(TMDbLists, BaseDirLists, SearchLists, UserDiscoverLists, TraktLi
                 continue
             li.set_context_menu()  # Set the context menu items
             li.set_uids_to_info()  # Add unique ids to properties so accessible in skins
-            li.set_thumb_to_art(self.thumb_override == 2) if self.thumb_override else None
             li.set_params_reroute(self.ftv_forced_lookup, self.flatten_seasons)  # Reroute details to proper end point
             li.set_params_to_info(self.plugin_category)  # Set path params to properties for use in skins
             li.infoproperties.update(property_params or {})
