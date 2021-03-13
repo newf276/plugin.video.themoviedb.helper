@@ -326,7 +326,7 @@ class TMDb(RequestAPI):
             return
         items = []
         param = TMDB_ALL_ITEMS_LISTS.get(tmdb_type, {}).get('params', {})
-        limit = TMDB_ALL_ITEMS_LISTS.get(tmdb_type, {}).get('limit', 20)
+        limit = TMDB_ALL_ITEMS_LISTS.get(tmdb_type, {}).get('limit', 40)
         pos_z = try_int(page, fallback=1) * limit
         pos_a = pos_z - limit
         dbtype = convert_type(tmdb_type, 'dbtype')

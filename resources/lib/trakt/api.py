@@ -111,13 +111,13 @@ class _TraktLists():
             'next_page': paginated_items.next_page}
 
     @use_activity_cache(cache_days=CACHE_SHORT)
-    def _get_sync_list(self, sync_type, trakt_type, sort_by=None, sort_how=None):
+    def _get_sync_list(self, sync_type, trakt_type, sort_by=title, sort_how=asc):
         return TraktItems(
             items=self.get_sync(sync_type, trakt_type),
-            trakt_type=trakt_type).build_items(sort_by, sort_how)
+            trakt_type=trakt_type).build_items(sort_by=title, sort_how=asc)
 
-    def get_sync_list(self, sync_type, trakt_type, page=1, limit=100, params=None, sort_by=None, sort_how=None, next_page=True):
-        response = self._get_sync_list(sync_type, trakt_type, sort_by=sort_by, sort_how=sort_how)
+    def get_sync_list(self, sync_type, trakt_type, page=1, limit=100, params=None, sort_by=title, sort_how=asc, next_page=True):
+        response = self._get_sync_list(sync_type, trakt_type, sort_by=title, sort_how=asc)
         if not response:
             return
         response = PaginatedItems(items=response['items'], page=page, limit=limit)
